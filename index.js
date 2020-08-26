@@ -194,9 +194,31 @@ const updateEmployee = () => {
         })
         }
 
-        const addDepartment = () => {
+        // const addDepartment = () => {
+        //     db.query('SELECT * FROM departments', (err, departments) => {
+        //         if (err) { console.log(err) }
 
-        }
+        //         departments = departments.map(department => ({
+        //             name: department.name,
+        //             value: department.id
+        //         }))
+        // }
+
+const addDepartment = () => {
+    prompt({
+        type: 'input',
+        name: 'name',
+        message: 'What is the name of the department?'
+    })
+        .then(department => {
+            db.query('INSERT INTO departments SET ?', department, (err) => {
+                if (err) { console.log(err) }
+                console.log('Department Created!')
+                mainMenu()
+            })
+        })
+
+}
 
         const viewRoles = () => {
             db.query('SELECT * FROM role', (err, role) => {
@@ -206,8 +228,55 @@ const updateEmployee = () => {
             })
         }
 
-        const addRole = () => {
 
-        }
+const addRole = () => {
+    db.query('SELECT * FROM departments', (err, department) => {
+        if (err) { console.log(err) }
+
+        department = departments.map(department => ({
+            name: department.name,
+            value: department.id
+        }))
+
+        db.query('SELECT * FROM role', (err, role) => {
+
+            role = role.map(role => ({
+                name: `${role.title} ${role.salary}`,
+                value: role.id
+            }))
+
+            role.unshift({ name: 'None', value: null })
+
+            prompt([
+                {
+                    type: 'input',
+                    name: 'title',
+                    message: 'What is the title of the role?'
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'What is the salary for the role?'
+                },
+                {
+                    type: 'list',
+                    name: 'department_id',
+                    message: 'choose a department:',
+                    choices: departments
+                }
+            ])
+                .then(role => {
+                    db.query('INSERT INTO role SET ?', role, (err) => {
+                        if (err) { console.log(err) }
+                        console.log('Role Created!')
+                        mainMenu()
+                    })
+                })
+                .catch(err => console.log(err))
+        })
+    })
+}
+
+        
 
         mainMenu()
