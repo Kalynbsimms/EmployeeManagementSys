@@ -240,7 +240,7 @@ const addRole = () => {
 
         db.query('SELECT * FROM role', (err, role) => {
 
-            role = role.map(role => ({
+            role = roles.map(role => ({
                 name: `${role.title} ${role.salary}`,
                 value: role.id
             }))
