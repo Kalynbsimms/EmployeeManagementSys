@@ -63,8 +63,8 @@ const mainMenu = () => {
                 case 'viewRoles':
                     viewRoles()
                     break
-                case 'addRoles':
-                    addRoles()
+                case 'addRole':
+                    addRole()
                     break
             }
         })
@@ -230,22 +230,22 @@ const addDepartment = () => {
 
 
 const addRole = () => {
-    db.query('SELECT * FROM departments', (err, department) => {
+    db.query('SELECT * FROM departments', (err, departments) => {
         if (err) { console.log(err) }
 
-        department = departments.map(department => ({
+        departments = departments.map(department => ({
             name: department.name,
             value: department.id
         }))
 
-        db.query('SELECT * FROM role', (err, role) => {
+        // db.query('SELECT * FROM role', (err, role) => {
 
-            role = roles.map(role => ({
-                name: `${role.title} ${role.salary}`,
-                value: role.id
-            }))
+            // role = roles.map(role => ({
+            //     name: `${role.title} ${role.salary}`,
+            //     value: role.id
+            // }))
 
-            role.unshift({ name: 'None', value: null })
+            // role.unshift({ name: 'None', value: null })
 
             prompt([
                 {
@@ -273,7 +273,7 @@ const addRole = () => {
                     })
                 })
                 .catch(err => console.log(err))
-        })
+        // })
     })
 }
 
