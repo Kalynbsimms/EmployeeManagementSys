@@ -5,15 +5,14 @@ USE employee_db;
 
 CREATE TABLE departments (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    name VARCHAR (30) NOT NULL,
-)
+    name VARCHAR (30) NOT NULL);
 
 CREATE TABLE role (
     id INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
     title VARCHAR (30) UNIQUE NOT NULL,
     salary DECIMAL UNSIGNED NOT NULL,
     department_id INT UNSIGNED NOT NULL,
-    FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE
+    FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE
 
 );
 

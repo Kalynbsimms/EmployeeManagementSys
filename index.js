@@ -1,11 +1,11 @@
-const inquire = require('inquirer')
+const {prompt} = require('inquirer')
 const mysql = require('mysql2')
 require('console.table')
 
 const db = mysql.createConnection('mysql://root:rootroot@localhost/employee_db')
 
 const mainMenu = () => {
-    inquire.prompt([
+    prompt([
         {
             type: 'list',
             name: 'choice',
@@ -144,25 +144,54 @@ const addEmployee = () => {
         })
     })
 }
-
-const updateEmployeeRole = () => {
-    db.query('UPDATE role FROM employee SET role = ?', employee, (err) => {
-        if (err) { console.log(err) }
-        console.log(`Employee Role Updated !`)
+// Update employee role function
+const updateEmployee = () => {
+    db.query('SELECT * FROM employee', (err, employees) => {
+        employees = employees.map(employee => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id
+        }))
+        db.query('SELECT * FROM role', (err, roles) => {
+            roles = roles.map(role => ({
+                name: role.title,
+                value: role.id
+            }))
+            // Prompts for choosing which employee you would like to update, and for what the new role of the employee will be
+            prompt([
+                {
+                    type: 'list',
+                    name: 'employee_id',
+                    message: 'Which employee would you like to update?',
+                    choices: employees
+                },
+                {
+                    type: 'list',
+                    name: 'role_id',
+                    message: 'What will be the new role of the employee?',
+                    choices: roles
+                },
+            ])
+                .then(employee => {
+                    console.log(employee.role_id)
+                    db.query('UPDATE employee SET role_id = ? WHERE employee.id = ?', [employee.role_id, employee.employee_id], (err) => {
+                        if (err) { console.log(err) }
+                        console.log('Employee has been updated')
+                        mainMenu()
+                    })
+                })
+                .catch(err => { console.log(err) })
+        })
     })
 }
-const addEmployee = () => {
-    db.query('SELECT * FROM role', (err, roles) => {
-        if (err) { console.log(err) }
 
-        roles = roles.map(role => ({
-            name: role.title,
-            value: role.id
-        }))
 
 
         const viewDepartments = () => {
-
+        db.query ('SELECT * FROM departments',(err, departments)=> {
+            if (err) { console.log (err)}
+            console.table(departments)
+            mainMenu()
+        })
         }
 
         const addDepartment = () => {
@@ -170,7 +199,11 @@ const addEmployee = () => {
         }
 
         const viewRoles = () => {
-
+            db.query('SELECT * FROM role', (err, role) => {
+                if (err) { console.log(err) }
+                console.table(role)
+                mainMenu()
+            })
         }
 
         const addRole = () => {
